@@ -65,7 +65,7 @@ class User(CommonModel):
 class Image(CommonModel):
     __tablename__ = "images"
     url = db.Column(db.TEXT, nullable=False)
-    type = db.Column(db.String(10), nullable=False)
+    image_type = db.Column(db.String(10), nullable=False)
 
     __table_args__ = (
         db.CheckConstraint("type IN ('main', 'sub')", name="check_image_type"),
