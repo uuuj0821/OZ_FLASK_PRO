@@ -4,8 +4,16 @@ from config import db
 
 ## 이미지 생성
 def create_image(url, image_type):
+    if image_type not in ["main", "sub"]:
+        abort(400, "Invalid image_type. Allowed values: 'main', 'sub'")
+
+    print("create_image--- ", url)
+    print("create_image--- ", image_type)
+
     # 새로운 이미지 데이터를 생성
-    new_image = Image(url=url, type=image_type)
+    new_image = Image(url=url, image_type=image_type)
+
+    print("create_image-----2", new_image)
 
     db.session.add(new_image)
     db.session.commit()

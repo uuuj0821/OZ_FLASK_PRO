@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from app.models import Question, Choices
+from app.models import Question, Choices, Image
 from config import db
 
 # 질문 생성
@@ -7,10 +7,12 @@ def create_question(data):
     title = data.get("title")
     is_active = data.get("is_active", True)
     sqe = data.get("sqe")
-    image = data.get("image")
+    image_id = data.get("image_id")
 
     if not title or not sqe:
         return {"error": "title과 sqe는 필수입니다."}, 400
+    
+    image = Image.query.get(image_id) if image_id else None
 
     new_question = Question(
         title=title,

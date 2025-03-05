@@ -4,12 +4,15 @@ from config import db
 
 
 # 특정 질문에 선택지 추가
-def create_choice(question_id, text, is_correct):
-    question = Question.query.get(question_id)
-    if not question:
-        return None  # 존재하지 않는 질문 ID
+def create_choice(data):
+    content = data.get("content")
+    is_active = data.get("is_active", True)
+    sqe = data.get("sqe")
+    question_id = data.get("question_id")
 
-    new_choice = Choices(question_id=question_id, text=text, is_correct=is_correct)
+    print(content, is_active, sqe, question_id)
+
+    new_choice = Choices(content=content, is_active=is_active, sqe=sqe, question_id=question_id)
     db.session.add(new_choice)
     db.session.commit()
     return new_choice.to_dict()

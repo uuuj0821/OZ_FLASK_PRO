@@ -73,7 +73,7 @@ def check_count_question():
     if request.method == 'GET':
         try:
             count = count_question()
-            return jsonify({"totla":count}), 200
+            return jsonify({"total":count}), 200
         except Exception as e:
             return jsonify({"message":str(e)})
 
@@ -100,25 +100,23 @@ def submit_answer():
         
     if request.method == 'POST':
         data = request.get_json()
-
-        if not isinstance(data, list):
-            return jsonify({"error": "데이터는 리스트 형식이어야 합니다."}), 400
         
         try:
-            for entry in data:
-                question_id = entry.get("question_id")
-                choice_id = entry.get("choice_id")
-                user_id = entry.get("user_id")
+            choice_id = data.get("choice_id")
+            user_id = data.get("user_id")
                 
-                if not all([question_id, choice_id, user_id]):
-                    return jsonify({"error": "모든 필드를 입력해야 합니다 (question_id, choice_id, user_id)."}), 400
+            if not all([choice_id, user_id]):
+                return jsonify({"error": "모든 필드를 입력해야 합니다 (question_id, choice_id, user_id)."}), 400
                 
-                create_answer(question_id, choice_id, user_id)
+            print("---submit----", choice_id, user_id)
+            create_answer(choice_id, user_id)
             
-            user_id = data[0]["user_id"]
+            user_id = data["user_id"]
+            print(data["user_id"])
+
             return jsonify({"message": f"User: {user_id}'s answers Success Create"}), 201
         except Exception as e:
-            return jsonify({"message":str(e)})
+            return jsonify({"message-except":str(e)})
 
 
 ## 7-1. 이미지생성 (/image post)
@@ -133,23 +131,23 @@ def post_image():
     if request.method == 'POST':
         data = request.get_json()
 
-        # data가 None이거나 "url"과 "type"이 없을 경우 예외 처리
-        if not data or "url" not in data or "type" not in data:
+        # data가 None이거나 "url"과 "image_type"이 없을 경우 예외 처리
+        if not data or "url" not in data or "image_type" not in data:
             return jsonify({"error": "이미지 URL과 type이 필요합니다."}), 400
         
         url = data["url"]
-        image_type = data["type"]
+        image_type = data["image_type"] 
 
-        # print(data)
-        # print(url)
-        # print(image_type)
+        print(data)
+        print(url)
+        print(image_type)
         # return jsonify({"message":"Success"}), 200
 
         try:
             image = create_image(url, image_type)
             return jsonify({"message":f"ID: {image['id']} Image Success Create"})
         except Exception as e:
-            return jsonify({"message":str(e)})
+            return jsonify({"message-except":str(e)})
 
 
 ## 7-2. 질문생성 (/question  post)
@@ -168,7 +166,7 @@ def post_question():
             question = create_question(data)
             return jsonify({"message":"Title: 새로운 질문 question Success Create"})
         except Exception as e:
-            return jsonify({"message":str(e)})
+            return jsonify({"message-exception":str(e)})
 
 
 ## 7-3. 선택지 생성 (/choice post)
@@ -187,7 +185,7 @@ def post_choice():
             choice = create_choice(data)
             return jsonify({"message":"Content: 새로운 선택지 choice Success Create"})
         except Exception as e:
-            return jsonify({"message":str(e)})
+            return jsonify({"message-execpt":str(e)})
         
 
 ## 답변

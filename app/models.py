@@ -66,19 +66,19 @@ class User(CommonModel):
 class Image(CommonModel):
     __tablename__ = "images"
     url = db.Column(db.TEXT, nullable=False)
-    type = db.Column(db.String(10), nullable=False)
+    image_type = db.Column(db.String(10), nullable=False)
 
     __table_args__ = (
-        db.CheckConstraint("type IN ('main', 'sub')", name="check_image_type"),
+        db.CheckConstraint("image_type IN ('main', 'sub')", name="check_image_type"),  # ✅ 컬럼명 수정
     )
 
     def __init__(self, url, image_type):
-        allowed_type = {"main", "sub"}
-        if image_type not in allowed_type:
-            abort(400, f"Invalid type: {type}. Allowed values: {allowed_type}")
+        allowed_types = {"main", "sub"}
+        if image_type not in allowed_types:
+            abort(400, f"Invalid type: {image_type}. Allowed values: {allowed_types}")
 
         self.url = url
-        self.type = type
+        self.image_type = image_type  
 
     questions = db.relationship("Question", back_populates="image")
 
@@ -86,10 +86,11 @@ class Image(CommonModel):
         return {
             "id": self.id,
             "url": self.url,
-            "type": self.type.value if hasattr(self.type, "value") else self.type,
+            "image_type": self.image_type, 
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }
+
 
 
 class Question(CommonModel):
@@ -108,7 +109,7 @@ class Question(CommonModel):
             "title": self.title,
             "is_active": self.is_active,
             "sqe": self.sqe,
-            "image": self.image.to_dict() if self.image else None,
+            "image_ㅑㅇ": self.image.to_dict() if self.image else None,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }
