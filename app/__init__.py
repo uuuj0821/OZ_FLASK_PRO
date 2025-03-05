@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 from flask_migrate import Migrate
 import app.models
-from app.routes import main_blp, answers_blp, choices_blp, images_blp, questions_blp, users_blp
+from app.routes import main_blp, answers_blp, choice_blp, image_blp, questions_blp, users_blp
 from config import db
 from flask_smorest import Api
 
@@ -36,8 +36,8 @@ def create_app():
 	# 블루프린트 등록 (swagger ui에서 api를 감지하도록 설정)
     api.register_blueprint(main_blp)
     api.register_blueprint(answers_blp)
-    api.register_blueprint(choices_blp)
-    api.register_blueprint(images_blp)
+    api.register_blueprint(choice_blp)
+    api.register_blueprint(image_blp)
     api.register_blueprint(questions_blp)
     api.register_blueprint(users_blp)
 

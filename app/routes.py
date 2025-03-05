@@ -9,8 +9,8 @@ from app.services.images import create_image, get_image_by_id,get_main_image
 # 블루프린트 설정
 main_blp = Blueprint("main", __name__)
 questions_blp = Blueprint("questions", __name__, url_prefix="/questions")
-images_blp = Blueprint("images", __name__, url_prefix="/image")
-choices_blp = Blueprint("choices", __name__, url_prefix="/choice")
+image_blp = Blueprint("image", __name__, url_prefix="/image")
+choice_blp = Blueprint("choice", __name__, url_prefix="/choice")
 answers_blp = Blueprint("answers", __name__, url_prefix="/answers")
 users_blp = Blueprint("users", __name__, url_prefix="/users")
 
@@ -23,7 +23,7 @@ def check_connect():
 
 
 ## 2. 메인 이미지 가져오기 (/image/main get)
-@images_blp.route('/main', methods=['GET'])
+@image_blp.route('/main', methods=['GET'])
 def view_main_image():
     if request.method == 'GET':
         image = get_main_image()
@@ -35,7 +35,7 @@ def view_main_image():
 def signup():
     if request.method == 'GET': # 전체 사용자 조회 // 나중에 삭제
         try:
-            return jsonify(get_all_user()), 200
+            return jsonify(get_all_users()), 200
         except Exception as e:
             return jsonify({"message":str(e)}), 400
         
@@ -79,7 +79,7 @@ def check_count_question():
 
 
 ## 5. 선택지 가져오기 (/choice/<int:questions_id> get)
-@choices_blp.route('/<int:question_id>', methods=['GET'])
+@choice_blp.route('/<int:question_id>', methods=['GET'])
 def view_choice(question_id):
     if request.method == 'GET':
         try:
@@ -122,7 +122,7 @@ def submit_answer():
 
 
 ## 7-1. 이미지생성 (/image post)
-@images_blp.route('/', methods=['GET', 'POST'])
+@image_blp.route('/', methods=['GET', 'POST'])
 def post_image():
     if request.method == 'GET':
         try:
@@ -132,13 +132,21 @@ def post_image():
         
     if request.method == 'POST':
         data = request.get_json()
-        url = data.get("url")
 
-        if not data or "url" not in data:
-            return jsonify({"error": "이미지 URL이 필요합니다."}), 400
+        # data가 None이거나 "url"과 "type"이 없을 경우 예외 처리
+        if not data or "url" not in data or "type" not in data:
+            return jsonify({"error": "이미지 URL과 type이 필요합니다."}), 400
+        
+        url = data["url"]
+        image_type = data["type"]
+
+        # print(data)
+        # print(url)
+        # print(image_type)
+        # return jsonify({"message":"Success"}), 200
 
         try:
-            image = create_image(url)    
+            image = create_image(url, image_type)
             return jsonify({"message":f"ID: {image['id']} Image Success Create"})
         except Exception as e:
             return jsonify({"message":str(e)})
@@ -164,7 +172,7 @@ def post_question():
 
 
 ## 7-3. 선택지 생성 (/choice post)
-@choices_blp.route('/', methods=['GET', 'POST'])
+@choice_blp.route('/', methods=['GET', 'POST'])
 def post_choice():
     if request.method == 'GET':
         try:

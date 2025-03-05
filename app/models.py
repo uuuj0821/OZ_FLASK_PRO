@@ -62,6 +62,7 @@ class User(CommonModel):
         }
 
 
+
 class Image(CommonModel):
     __tablename__ = "images"
     url = db.Column(db.TEXT, nullable=False)

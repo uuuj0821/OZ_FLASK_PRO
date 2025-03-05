@@ -3,11 +3,13 @@ from app.models import Image
 from config import db
 
 ## 이미지 생성
-def create_image(url):
+def create_image(url, image_type):
     # 새로운 이미지 데이터를 생성
-    new_image = Image(url=url)
+    new_image = Image(url=url, type=image_type)
+
     db.session.add(new_image)
     db.session.commit()
+
     return new_image.to_dict()
 
 ## 이미지 조회
