@@ -18,7 +18,14 @@ def create_user(data):
                 )
     
     db.session.add(new_user)
-    db.session.commit()
+
+    # commit 오류 시 롤백
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        print(f"DB Commit Error: {e}")
+        abort(500, "Internal Server Error")
 
     return new_user.to_dict()
 
@@ -33,6 +40,6 @@ def get_user_by_id(user_id):
     return user.to_dict()
 
 # 사용자 전체 조회
-def get_all_user():
+def get_all_users():
     return [user.to_dict() for user in User.query.all()]
 
